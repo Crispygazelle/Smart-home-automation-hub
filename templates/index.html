@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Hub</title>
+    <style>
+        body { font-family: sans-serif; background-color: #121212; color: white; padding: 2rem; }
+        .device-card { background: #1e1e1e; padding: 1.5rem; border-radius: 8px; width: 300px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        .btn-on { background-color: #4CAF50; color: white; border: none; }
+        .btn-off { background-color: #f44336; color: white; border: none; }
+    </style>
+</head>
+<body>
+
+    <h2>Smart Home Dashboard</h2>
+
+    {% for device in devices %}
+    <div class="device-card">
+        <h3>{{ device['name'] }}</h3>
+        <p>Status: <strong id="status-{{ device['device_id'] }}">{{ device['current_state'] }}</strong></p>
+        
+        <button class="btn-on" onclick="toggleDevice({{ device['device_id'] }}, '{{ device['mqtt_topic'] }}', 'ON')">ON</button>
+        <button class="btn-off" onclick="toggleDevice({{ device['device_id'] }}, '{{ device['mqtt_topic'] }}', 'OFF')">OFF</button>
+    </div>
+    {% endfor %}
+
+    <script>
+        function toggleDevice(deviceId, topic, command) {
+            fetch('/api/toggle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    device_id: deviceId,
+                    topic: topic,
+                    command: command
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    document.getElementById('status-' + deviceId).innerText = data.state;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
