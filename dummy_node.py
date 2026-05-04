@@ -1,11 +1,11 @@
 import paho.mqtt.client as mqtt
 
 # Configuration
-BROKER = "localhost" # It looks for the Mosquitto broker on this Pi
+BROKER = "localhost" # looks for the Mosquitto broker
 PORT = 1883
 TOPIC = "home/living_room/light"
 
-# What to do when it connects
+
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print(f"[*] Node connected to MQTT Broker successfully!")
@@ -14,7 +14,7 @@ def on_connect(client, userdata, flags, rc):
     else:
         print(f"[!] Failed to connect. Code: {rc}")
 
-# What to do when it receives a message
+
 def on_message(client, userdata, msg):
     command = msg.payload.decode()
     print(f"\n[RECEIVED] Topic: {msg.topic} | Command: {command}")
